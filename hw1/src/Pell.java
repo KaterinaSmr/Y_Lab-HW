@@ -7,7 +7,6 @@ public class Pell {
         final int MAX_N = 30;
         long[] pellSeq = new long[MAX_N + 1];
         Arrays.fill(pellSeq, -1);
-
         try (Scanner scanner = new Scanner(System.in)) {
             int n = scanner.nextInt();
             System.out.println(pellWithRecursion(n));

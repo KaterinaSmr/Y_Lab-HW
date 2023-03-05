@@ -9,11 +9,11 @@ public class Guess {
         guess(number, maxAttempts);
     }
 
-    public static void guess(int number, int maxAttempts){
+    public static void guess(int number, int maxAttempts) {
         try (Scanner scanner = new Scanner(System.in)) {
-            for (int i = maxAttempts-1; i >= 0 ; i--) {
+            for (int i = maxAttempts - 1; i >= 0; i--) {
                 int n = scanner.nextInt();
-                if (n == number){
+                if (n == number) {
                     System.out.println("Ты угадал с " + (maxAttempts - i) + " попытки!");
                     return;
                 } else {

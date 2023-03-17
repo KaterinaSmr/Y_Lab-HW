@@ -23,7 +23,7 @@ public class StatsAccumulatorImpl implements StatsAccumulator {
         count++;
         min = Integer.min(min, value);
         max = Integer.max(max, value);
-        average = (average + value) / count;
+        average = (average * (count - 1) + value) / count;
     }
 
     @Override

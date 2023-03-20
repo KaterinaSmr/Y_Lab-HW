@@ -98,13 +98,13 @@ public class Sorter {
     private File mergeChunks(File sortedFile, int chunksAmount) throws IOException {
         PriorityQueue<QueueNode> outputQueue = new PriorityQueue<>(Comparator.comparingLong(e -> e.bufferedLongs.peek()));
         List<Scanner> scanners = new ArrayList<>();
-        for (int i = 1; i <= chunksAmount; i++) {
-            QueueNode nextChunk = new QueueNode(new File(i + ".txt"));
-            scanners.add(nextChunk.scanner);
-            nextChunk.loadBufferFromFile(BUFFER_SIZE);
-            outputQueue.add(nextChunk);
-        }
         try (PrintWriter sortedFilePrintWriter = new PrintWriter(sortedFile)) {
+            for (int i = 1; i <= chunksAmount; i++) {
+                QueueNode nextChunk = new QueueNode(new File(i + ".txt"));
+                scanners.add(nextChunk.scanner);
+                nextChunk.loadBufferFromFile(BUFFER_SIZE);
+                outputQueue.add(nextChunk);
+            }
             while (!outputQueue.isEmpty()) {
                 QueueNode currentNode = outputQueue.poll();
                 sortedFilePrintWriter.println(currentNode.poll());

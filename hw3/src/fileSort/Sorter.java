@@ -1,9 +1,6 @@
 package fileSort;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -46,14 +43,15 @@ public class Sorter {
      */
     private int splitIntoChunks(File dataFile) throws IOException {
         int chunksAmount = 0;
-        try (Scanner scanner = new Scanner(new FileInputStream(dataFile))) {
-            while (scanner.hasNextLong()) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(dataFile))) {
+            String text = bufferedReader.readLine();
+            while (text !=null) {
                 int lines = 0;
                 ArrayList<Long> nextChunk = new ArrayList<>(CHUNK_SIZE);
-                while (lines < CHUNK_SIZE && scanner.hasNextLong()) {
-                    Long nextLong = scanner.nextLong();
-                    nextChunk.add(nextLong);
+                while (lines < CHUNK_SIZE && (text !=null)) {
+                    nextChunk.add(Long.parseLong(text));
                     lines++;
+                    text = bufferedReader.readLine();
                 }
                 sortChunkAndWriteToFile(nextChunk, ++chunksAmount);
             }
@@ -96,12 +94,12 @@ public class Sorter {
      * @throws IOException
      */
     private File mergeChunks(File sortedFile, int chunksAmount) throws IOException {
-        PriorityQueue<QueueNode> outputQueue = new PriorityQueue<>(Comparator.comparingLong(e -> e.bufferedLongs.peek()));
-        List<Scanner> scanners = new ArrayList<>();
+        PriorityQueue<QueueNode> outputQueue = new PriorityQueue<>(Comparator.comparingLong(QueueNode::peek));
+        List<BufferedReader> bufferedReaders = new ArrayList<>();
         try (PrintWriter sortedFilePrintWriter = new PrintWriter(sortedFile)) {
             for (int i = 1; i <= chunksAmount; i++) {
                 QueueNode nextChunk = new QueueNode(new File(i + ".txt"));
-                scanners.add(nextChunk.scanner);
+                bufferedReaders.add(nextChunk.bufferedReader);
                 nextChunk.loadBufferFromFile(BUFFER_SIZE);
                 outputQueue.add(nextChunk);
             }
@@ -117,7 +115,13 @@ public class Sorter {
             }
             sortedFilePrintWriter.flush();
         } finally {
-            scanners.forEach(Scanner::close);
+            bufferedReaders.forEach(bufferedReader -> {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
         return sortedFile;
     }
@@ -125,29 +129,34 @@ public class Sorter {
     /**
      * This class is wrapper class for each chunk.
      * {@link QueueNode#bufferedLongs} is list of buffered elements with max {@link Sorter#BUFFER_SIZE} items.
-     * {@link QueueNode#scanner} is scanner to read from corresponding file
+     * {@link QueueNode#bufferedReader} is scanner to read from corresponding file
      */
     private static class QueueNode {
         private final LinkedList<Long> bufferedLongs;
-        private final Scanner scanner;
+        private final BufferedReader bufferedReader;
 
         public QueueNode(File chunkFile) throws IOException {
             this.bufferedLongs = new LinkedList<>();
-            this.scanner = new Scanner(new FileInputStream(chunkFile));
+            this.bufferedReader = new BufferedReader(new FileReader(chunkFile));
         }
 
         public boolean isEmpty() {
             return bufferedLongs.isEmpty();
         }
 
+        public Long peek(){
+            return bufferedLongs.peek();
+        }
+
         public Long poll() {
             return bufferedLongs.poll();
         }
 
-        public void loadBufferFromFile(int bufferSize) {
+        public void loadBufferFromFile(int bufferSize) throws IOException {
             int lines = 0;
-            while (scanner.hasNextLong() && lines < bufferSize) {
-                bufferedLongs.add(scanner.nextLong());
+            String next;
+            while (lines < bufferSize && (next = bufferedReader.readLine()) != null) {
+                bufferedLongs.add(Long.parseLong(next));
                 lines++;
             }
         }

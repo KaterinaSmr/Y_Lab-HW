@@ -42,7 +42,7 @@ public class DatedMapImpl implements DatedMap {
 
     @Override
     public boolean containsKey(String key) {
-        return map.get(key) != null;
+        return map.containsKey(key);
     }
 
     @Override

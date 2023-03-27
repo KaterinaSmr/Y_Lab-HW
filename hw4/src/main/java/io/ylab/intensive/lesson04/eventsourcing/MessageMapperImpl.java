@@ -13,13 +13,13 @@ import java.util.Map;
  * 2 types of messages are supported: {@code SAVE} - message requesting saving of a {@link Person} object;
  * {@code DELETE} - message requesting deletion of a {@link Person} object.<br/>
  * All messages have following structure: { {@value MessageMapperImpl#TRANSACTION_KEY} : "", {@value MessageMapperImpl#VALUE_KEY} : ""}.
- * To differentiate message type 1 from message type 2 the method {@link MessageMapper#getTransaction} should be used.
+ * To differentiate message types, the method {@link MessageMapper#getTransaction} should be used.
  * Values for {@value MessageMapperImpl#TRANSACTION_KEY} are instances of enum {@link Transaction} corresponding
  * to each message type.<br/>
  * The {@value MessageMapperImpl#VALUE_KEY} contains either {@link Person} object for message type  {@code SAVE},
  * or a {@link Long} value for message type {@code DELETE}. Message type ({@link Transaction} type) should be
- * determined before attempting to parse the
- * {@value MessageMapperImpl#VALUE_KEY} section, otherwise {@link MismatchedInputException} is thrown.
+ * determined before attempting to parse the {@value MessageMapperImpl#VALUE_KEY} section, otherwise
+ * {@link MismatchedInputException} is thrown.
  */
 public class MessageMapperImpl implements MessageMapper {
   private final ObjectMapper objectMapper = new ObjectMapper();

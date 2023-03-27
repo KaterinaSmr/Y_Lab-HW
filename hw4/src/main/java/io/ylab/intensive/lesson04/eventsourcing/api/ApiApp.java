@@ -32,7 +32,7 @@ public class ApiApp {
       PersonApi personApi = new PersonApiImpl(dbConnection, channel);
 
       //Добавление Person
-      personApi.savePerson(1L, "Steve", "Jobs", "Paul");
+      personApi.savePerson(1L, "Steve", "Wozniak", "Gary ");
       personApi.savePerson(2L, "Elon", "Musk", "Reeve");
       personApi.savePerson(3L, "Nikola", "Tesla", "---");
       try {
@@ -41,6 +41,9 @@ public class ApiApp {
         e.printStackTrace();
       }
       System.out.println(personApi.findAll());
+
+      //Изменение
+      personApi.savePerson(1L, "Steve", "Jobs", "Paul");
 
       //Удаление Person по personId
       personApi.savePerson(null, "Sergey", "Brin", "Mikhailovich");
@@ -56,7 +59,6 @@ public class ApiApp {
       System.out.println(personApi.findAll());
       System.out.println("Person with person id = 3 " + personApi.findPerson(3L));
       System.out.println("Person with person id = 1 " + personApi.findPerson(1L));
-
     }
   }
 

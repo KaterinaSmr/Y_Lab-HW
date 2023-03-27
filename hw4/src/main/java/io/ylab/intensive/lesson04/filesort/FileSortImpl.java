@@ -99,7 +99,9 @@ public class FileSortImpl implements FileSorter {
    */
   private File writeSortedFromDBToFile(File destinationFile, Connection connection) throws FileNotFoundException, SQLException {
     String query = "SELECT * FROM numbers ORDER BY numbers DESC";
-    try (PrintWriter printWriter = new PrintWriter(destinationFile); PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+    try (PrintWriter printWriter = new PrintWriter(destinationFile);
+         PreparedStatement ps = connection.prepareStatement(query);
+         ResultSet rs = ps.executeQuery()) {
       while (rs.next()) {
         printWriter.println(rs.getLong(1));
       }

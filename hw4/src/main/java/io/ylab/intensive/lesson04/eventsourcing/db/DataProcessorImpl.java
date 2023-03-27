@@ -37,7 +37,7 @@ public class DataProcessorImpl implements DataProcessor {
   }
 
   /**
-   * Creates connection to RabbitMQ and database. Waits for messages from the queue {@link DataProcessorImpl#QUEUE}
+   * Creates connection to RabbitMQ and database. Gets messages from the queue {@link DataProcessorImpl#QUEUE}
    * in RabbitMQ and delegates message processing to {@link DataProcessorImpl#process} method
    *
    * @throws IOException
@@ -52,6 +52,7 @@ public class DataProcessorImpl implements DataProcessor {
          Channel channel = connection.createChannel();
          java.sql.Connection dbConnection = dataSource.getConnection()) {
       personDAO = new PersonDAOImpl(dbConnection);
+
       logger.info("Data Processor is up. Waiting for messages");
       while (!Thread.currentThread().isInterrupted()) {
         GetResponse message = channel.basicGet(QUEUE, true);

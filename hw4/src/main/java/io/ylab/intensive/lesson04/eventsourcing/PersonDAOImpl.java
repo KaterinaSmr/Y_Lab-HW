@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class is responsible for interaction with DB table person. The {@link Person} object represents the records of the
- * table. This class opens and closes database connection for each interaction.
+ * This class is responsible for interaction with DB table person. The {@link Person} object represents a record of the
+ * table. It is assumed that db connection is provided.
  */
 public class PersonDAOImpl implements PersonDAO {
   private final Connection connection;
@@ -32,21 +32,6 @@ public class PersonDAOImpl implements PersonDAO {
     }
   }
 
-  @Override
-  public Person findPerson(long personId) throws SQLException {
-    String selectQuery = "SELECT * FROM person WHERE person_id = ?";
-    try (PreparedStatement ps = connection.prepareStatement(selectQuery)) {
-      ps.setLong(1, personId);
-      ResultSet rs = ps.executeQuery();
-      if (rs.isBeforeFirst()) {
-        rs.next();
-        return resultSetLineToPerson(rs);
-      } else {
-        return null;
-      }
-    }
-  }
-
   /**
    * Maps one line of {@link ResultSet} to a {@link Person} object
    *
@@ -61,6 +46,21 @@ public class PersonDAOImpl implements PersonDAO {
     person.setLastName(rs.getString(3));
     person.setMiddleName(rs.getString(4));
     return person;
+  }
+
+  @Override
+  public Person findPerson(long personId) throws SQLException {
+    String selectQuery = "SELECT * FROM person WHERE person_id = ?";
+    try (PreparedStatement ps = connection.prepareStatement(selectQuery)) {
+      ps.setLong(1, personId);
+      ResultSet rs = ps.executeQuery();
+      if (rs.isBeforeFirst()) {
+        rs.next();
+        return resultSetLineToPerson(rs);
+      } else {
+        return null;
+      }
+    }
   }
 
   /**

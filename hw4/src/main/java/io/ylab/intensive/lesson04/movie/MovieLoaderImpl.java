@@ -80,7 +80,7 @@ public class MovieLoaderImpl implements MovieLoader {
   /**
    * Uploads collection of {@link Movie} objects to database with batch processing. Batch size is not specified,
    * so all the values inserted in one batch.
-   * Any empty or null field in {@link Movie} object is converted to {@code <null>} value in db table
+   * Null numeric fields in {@link Movie} object are converted to {@code <null>} value in db table
    *
    * @param allMovies
    * @throws SQLException if a database access error occurs or this method is called on a closed connection

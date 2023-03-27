@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Stores key-value map in a database. Multiple maps allowed. Maps differentiated by names.<br/>
  * {@link PersistentMapImpl#mapName} is map name. Map name is not allowed to be {@code null}.
- * Key and value {@code null} values are allowed. <br/>
+ * Key and value are allowed to be {@code null} . <br/>
  * This implementation <b>does not support multi-thread access </b>.
  */
 public class PersistentMapImpl implements PersistentMap {
@@ -50,7 +50,7 @@ public class PersistentMapImpl implements PersistentMap {
     // мы не можем реюзать get() потому что он возвращает одинаковые значения null в случае если ключа нет
     // и если ключ есть и значение для него явно указано как null
     String query = key == null ? "SELECT COUNT(*) FROM persistent_map WHERE map_name = ? AND KEY IS NULL"
-            : "SELECT COUNT(*) FROM persistent_map WHERE map_name = ? AND KEY = ?";
+                               : "SELECT COUNT(*) FROM persistent_map WHERE map_name = ? AND KEY = ?";
     try (Connection connection = dataSource.getConnection();
          PreparedStatement ps = connection.prepareStatement(query)) {
       ps.setString(1, mapName);
@@ -104,7 +104,7 @@ public class PersistentMapImpl implements PersistentMap {
   public String get(String key) throws SQLException {
     throwExceptionIfMapNameIsNull();
     String query = key == null ? "SELECT value FROM persistent_map WHERE map_name = ? AND KEY IS NULL"
-            : "SELECT value FROM persistent_map WHERE map_name = ? AND KEY = ?";
+                               : "SELECT value FROM persistent_map WHERE map_name = ? AND KEY = ?";
     try (Connection connection = dataSource.getConnection();
          PreparedStatement ps = connection.prepareStatement(query)) {
       ps.setString(1, mapName);
@@ -139,7 +139,7 @@ public class PersistentMapImpl implements PersistentMap {
 
   private void remove(String key, Connection connection) throws SQLException {
     String query = key == null ? "DELETE FROM persistent_map WHERE map_name = ? AND KEY IS NULL"
-            : "DELETE FROM persistent_map WHERE map_name = ? AND KEY = ?";
+                               : "DELETE FROM persistent_map WHERE map_name = ? AND KEY = ?";
     try (PreparedStatement ps = connection.prepareStatement(query)) {
       ps.setString(1, mapName);
       if (key != null) {

@@ -16,9 +16,10 @@ import java.io.IOException;
  * {@link PersonPublisherImpl#QUEUE} is the queue name
  * {@link PersonPublisherImpl#EXCHANGE} is the exhchange name
  * {@link PersonPublisherImpl#channel} is the {@link Channel} object to RabbitMQ
+ *
  * @see MessageMapper
  */
-public class PersonPublisherImpl implements PersonPublisher{
+public class PersonPublisherImpl implements PersonPublisher {
   private final Channel channel;
   private final String QUEUE = "personQueue";
   private final String EXCHANGE = "personExch";
@@ -37,6 +38,7 @@ public class PersonPublisherImpl implements PersonPublisher{
    * Publishes message to save {@link Person} object to the queue. First the {@link Person} object is wrapped into a
    * message in JSON format with the {@link MessageMapper}. And then this message is published with the
    * {@link PersonPublisherImpl#publish} method
+   *
    * @param person is {@link Person} object to be saved
    * @throws IOException
    */
@@ -54,6 +56,7 @@ public class PersonPublisherImpl implements PersonPublisher{
    * Publishes message to remove particular {@link Person} object to the queue.  First the {@link Person} object
    * is wrapped into a message in JSON format with the {@link MessageMapper}. And then this message is published with the
    * {@link PersonPublisherImpl#publish} method
+   *
    * @param personId is {@link Long} value of identificaion of a {@link Person} object to be removed
    * @throws IOException
    */

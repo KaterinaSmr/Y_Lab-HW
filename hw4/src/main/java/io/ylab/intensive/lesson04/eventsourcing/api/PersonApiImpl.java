@@ -1,10 +1,5 @@
 package io.ylab.intensive.lesson04.eventsourcing.api;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
 import com.rabbitmq.client.Channel;
 import io.ylab.intensive.lesson04.eventsourcing.Person;
 import io.ylab.intensive.lesson04.eventsourcing.PersonDAO;
@@ -12,12 +7,15 @@ import io.ylab.intensive.lesson04.eventsourcing.PersonDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
- * This class if responsible for interaction with data for {@link Person} object. It can read data from database and
+ * This class is responsible for interaction with data for {@link Person} objects. It can read data from database and
  * send requests for update of {@link Person} objects representation in db. <br/>
- * The request for update are published to the RabbitMQ queue. This part is delegated to {@link PersonPublisher}<br/>
+ * The requests for update are published to the RabbitMQ queue. This part is delegated to {@link PersonPublisher}<br/>
  * The reading data from database is delegated to {@link PersonDAO}
  */
 public class PersonApiImpl implements PersonApi {
@@ -32,8 +30,8 @@ public class PersonApiImpl implements PersonApi {
 
   @Override
   public void deletePerson(Long personId) throws IOException {
-    if (personId == null){
-      logger.warn("Failed to remove person with id = " + personId);
+    if (personId == null) {
+      logger.warn("Failed to remove person: null is not valid for id");
       return;
     }
     personPublisher.removePerson(personId);
@@ -41,8 +39,8 @@ public class PersonApiImpl implements PersonApi {
 
   @Override
   public void savePerson(Long personId, String firstName, String lastName, String middleName) throws IOException {
-    if (personId == null){
-      logger.warn("Failed to save person with id = " + personId);
+    if (personId == null) {
+      logger.warn("Failed to save person: null is not valid for id");
       return;
     }
     Person personToSave = new Person(personId, firstName, lastName, middleName);
@@ -51,7 +49,7 @@ public class PersonApiImpl implements PersonApi {
 
   @Override
   public Person findPerson(Long personId) throws SQLException {
-    if (personId == null){
+    if (personId == null) {
       logger.warn("Failed to find person: null is not valid for id");
       return null;
     }

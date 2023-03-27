@@ -11,6 +11,5 @@ public interface PersonDAO {
 
   boolean savePerson(Person person) throws SQLException;
 
-
   boolean deletePerson(long personId) throws SQLException;
 }

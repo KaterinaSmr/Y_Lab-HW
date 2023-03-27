@@ -12,7 +12,6 @@ public class DbApp {
     DataSource dataSource = initDb();
     ConnectionFactory connectionFactory = initMQ();
 
-    // тут пишем создание и запуск приложения работы с БД
     DataProcessor dataProcessor= new DataProcessorImpl(dataSource, connectionFactory);
     dataProcessor.processMessages();
 

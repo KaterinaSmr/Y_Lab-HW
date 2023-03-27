@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface MessageMapper {
 
-
   String wrapPerson(Person person) throws JsonProcessingException;
 
   String wrapPersonId(Long personId) throws JsonProcessingException;

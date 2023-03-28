@@ -1,10 +1,7 @@
 package io.ylab.intensive.lesson04.eventsourcing.db;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.GetResponse;
+import com.rabbitmq.client.*;
 import io.ylab.intensive.lesson04.eventsourcing.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +19,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class DataProcessorImpl implements DataProcessor {
   private final ConnectionFactory connectionFactory;
+  private final String EXCHANGE = "personExch";
   private final String QUEUE = "personQueue";
   private final MessageMapper messageMapper;
 
@@ -51,6 +49,9 @@ public class DataProcessorImpl implements DataProcessor {
     try (Connection connection = connectionFactory.newConnection();
          Channel channel = connection.createChannel();
          java.sql.Connection dbConnection = dataSource.getConnection()) {
+      channel.exchangeDeclare(EXCHANGE, BuiltinExchangeType.TOPIC);
+      channel.queueDeclare(QUEUE, true, false, false, null);
+      channel.queueBind(QUEUE, EXCHANGE, "*");
       personDAO = new PersonDAOImpl(dbConnection);
 
       logger.info("Data Processor is up. Waiting for messages");

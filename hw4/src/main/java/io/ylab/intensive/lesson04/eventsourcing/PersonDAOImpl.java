@@ -21,8 +21,8 @@ public class PersonDAOImpl implements PersonDAO {
   @Override
   public List<Person> findAll() throws SQLException {
     String findAllQuery = "SELECT * FROM person";
-    try (PreparedStatement preparedStatement = connection.prepareStatement(findAllQuery)) {
-      ResultSet rs = preparedStatement.executeQuery();
+    try (PreparedStatement preparedStatement = connection.prepareStatement(findAllQuery);
+      ResultSet rs = preparedStatement.executeQuery()) {
 
       List<Person> allPeople = new ArrayList<>();
       while (rs.next()) {
@@ -48,18 +48,43 @@ public class PersonDAOImpl implements PersonDAO {
     return person;
   }
 
+/*
+// Можно так? не закрвать вручную ResultSet, т.к в документации к методу RestulSet.close()
+// написано что он автоматически закрывается при закрытии сгенерировавшего его Statement-а
   @Override
   public Person findPerson(long personId) throws SQLException {
     String selectQuery = "SELECT * FROM person WHERE person_id = ?";
     try (PreparedStatement ps = connection.prepareStatement(selectQuery)) {
-      ps.setLong(1, personId);
       ResultSet rs = ps.executeQuery();
+      ps.setLong(1, personId);
+      rs = ps.executeQuery();
       if (rs.isBeforeFirst()) {
         rs.next();
         return resultSetLineToPerson(rs);
       } else {
         return null;
       }
+  }
+ */
+
+  @Override
+  public Person findPerson(long personId) throws SQLException {
+    String selectQuery = "SELECT * FROM person WHERE person_id = ?";
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+      ps = connection.prepareStatement(selectQuery);
+      ps.setLong(1, personId);
+      rs = ps.executeQuery();
+      if (rs.isBeforeFirst()) {
+        rs.next();
+        return resultSetLineToPerson(rs);
+      } else {
+        return null;
+      }
+    } finally {
+      ps.close();
+      rs.close();
     }
   }
 

@@ -51,17 +51,17 @@ public class PersistentMapImpl implements PersistentMap {
     // и если ключ есть и значение для него явно указано как null
     String query = key == null ? "SELECT COUNT(*) FROM persistent_map WHERE map_name = ? AND KEY IS NULL"
                                : "SELECT COUNT(*) FROM persistent_map WHERE map_name = ? AND KEY = ?";
+
     try (Connection connection = dataSource.getConnection();
          PreparedStatement ps = connection.prepareStatement(query)) {
       ps.setString(1, mapName);
       if (key != null) {
         ps.setString(2, key);
       }
-
-      //я не забыла про ResultSet - он автоматически закрывается, когда закрывается сгенерировавший его Statement
-      ResultSet rs = ps.executeQuery();
-      rs.next();
-      return rs.getInt(1) > 0;
+      try(ResultSet rs = ps.executeQuery()) {
+        rs.next();
+        return rs.getInt(1) > 0;
+      }
     }
   }
 
@@ -81,12 +81,13 @@ public class PersistentMapImpl implements PersistentMap {
     try (Connection connection = dataSource.getConnection();
          PreparedStatement ps = connection.prepareStatement(query)) {
       ps.setString(1, mapName);
-      ResultSet rs = ps.executeQuery();
-      while (rs.next()) {
-        allKeys.add(rs.getString(1));
+      try (ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+          allKeys.add(rs.getString(1));
+        }
       }
+      return allKeys;
     }
-    return allKeys;
   }
 
   /**
@@ -111,9 +112,10 @@ public class PersistentMapImpl implements PersistentMap {
       if (key != null) {
         ps.setString(2, key);
       }
-      ResultSet rs = ps.executeQuery();
-      if (rs.next()) {
-        return rs.getString(1);
+      try(ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) {
+          return rs.getString(1);
+        }
       }
       return null;
     }

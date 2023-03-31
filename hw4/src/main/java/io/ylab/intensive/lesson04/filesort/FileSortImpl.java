@@ -58,6 +58,7 @@ public class FileSortImpl implements FileSorter {
     String query = "INSERT INTO numbers VALUES (?)";
     try (BufferedReader bufferedReader = new BufferedReader(new FileReader(sourceFile), BUFFER_SIZE);
          PreparedStatement ps = connection.prepareStatement(query)) {
+      connection.setAutoCommit(false);
       String nextLine;
       int batchItems = 0;
       while ((nextLine = bufferedReader.readLine()) != null) {
@@ -68,6 +69,7 @@ public class FileSortImpl implements FileSorter {
         }
       }
       ps.executeBatch();
+      connection.commit();
     }
     logger.info("Batch insertion to db end at " + LocalDateTime.now() + " Time elapsed: " + (System.currentTimeMillis() - start) + " ms");
   }

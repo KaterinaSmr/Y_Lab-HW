@@ -76,14 +76,11 @@ public class DataProcessorImpl implements DataProcessor {
   public void process(String messageReceived) throws SQLException {
     try {
       Transaction transaction = messageMapper.getTransaction(messageReceived);
-      switch (transaction) {
-        case SAVE:
-          savePerson(messageMapper.parsePerson(messageReceived));
-          break;
-        case DELETE:
-          deletePerson(messageMapper.parsePersonId(messageReceived));
-          break;
-        default:
+      if (transaction == Transaction.SAVE) {
+        savePerson(messageMapper.parsePerson(messageReceived));
+      } else if (transaction == Transaction.DELETE) {
+        deletePerson(messageMapper.parsePersonId(messageReceived));
+      } else {
           logger.warn("Unable to process messages with transaction type " + transaction + ". Message content: " + messageReceived);
       }
     } catch (JsonProcessingException e) {

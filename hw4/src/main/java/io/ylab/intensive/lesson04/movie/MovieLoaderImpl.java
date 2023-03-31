@@ -12,12 +12,15 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Function;
 
 public class MovieLoaderImpl implements MovieLoader {
   private DataSource dataSource;
+  private  Function<String, Movie> converterStringToMovie;
 
   public MovieLoaderImpl(DataSource dataSource) {
     this.dataSource = dataSource;
+    this.converterStringToMovie = this::convert;
   }
 
   @Override
@@ -28,7 +31,7 @@ public class MovieLoaderImpl implements MovieLoader {
 
   /**
    * Reads the file specified line by line and converts each line to the {@link Movie} object.
-   * {@link MovieLoaderImpl#convertStringToMovie(String)} method is used for string to {@link Movie}
+   * {@link MovieLoaderImpl#convert(String)} method is used for string to {@link Movie}
    * conversion
    *
    * @param file the source file
@@ -44,7 +47,7 @@ public class MovieLoaderImpl implements MovieLoader {
       bufferedReader.readLine();
       String nextLine;
       while ((nextLine = bufferedReader.readLine()) != null) {
-        allMovies.add(convertStringToMovie(nextLine));
+        allMovies.add(converterStringToMovie.apply(nextLine));
       }
     }
     return allMovies;
@@ -58,7 +61,7 @@ public class MovieLoaderImpl implements MovieLoader {
    * @throws NumberFormatException          if the source file contains incorrect symbols in numeric fields
    * @throws ArrayIndexOutOfBoundsException if the source file contains incorrect number of columns for at least one row
    */
-  private Movie convertStringToMovie(String nextLine) {
+  private Movie convert(String nextLine) {
     Movie movie = new Movie();
     String[] movieData = nextLine.split(";");
     movie.setYear(parseStringToIntOrNull(movieData[0]));

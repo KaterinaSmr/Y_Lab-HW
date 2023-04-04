@@ -45,7 +45,7 @@ public class MessageProcessorImpl implements MessageProcessor {
     StringBuilder result = new StringBuilder(message);
     for (String s : words) {
       if (dbClient.isBadWord(s)) {
-        replaceBadWord(result, s);
+        maskBadWord(result, s);
       }
     }
 
@@ -57,39 +57,24 @@ public class MessageProcessorImpl implements MessageProcessor {
    * First, the curse word is found withing the message itself, taking into account valid word limiting characters,
    * which is one of {@link MessageProcessorImpl#wordBorder} characters.
    * Next, withing this match the curse word itself is searched. Based on these 2 searches, the start position of the
-   * word to be replaced is determined. The {@link MessageProcessorImpl#getReplacementWord(String)} provides the masked
-   * version of the curse word.
+   * word to be replaced is determined. First and last symbols of the bad word are remaining the same, every other symbol
+   * is replaces with '*'.
    * @param sb message, in which the curse word should be masked
    * @param badWord word to be masked
    */
-  private void replaceBadWord(StringBuilder sb, String badWord) {
+  private void maskBadWord(StringBuilder sb, String badWord) {
     Matcher matcher = Pattern.compile(wordBorder + badWord + wordBorder).matcher(sb);
+
     if (matcher.find()) {
-      String match = matcher.group(0);
-      Matcher matcherInternal = Pattern.compile(badWord).matcher(match);
-      if (matcherInternal.find()) {
-        int startPos = matcher.start() + matcherInternal.start();
-        sb.replace(startPos, startPos + badWord.length(), getReplacementWord(badWord));
+      String matchWithBorders = matcher.group(0);
+      Matcher wordMatcher = Pattern.compile(badWord).matcher(matchWithBorders);
+
+      if (wordMatcher.find()) {
+        int maskingStartPosition = matcher.start() + wordMatcher.start() + 1;
+        int maskingLength = badWord.length() - 2;
+        sb.replace(maskingStartPosition, maskingStartPosition + maskingLength, "*".repeat(maskingLength));
       }
     }
-  }
-
-  /**
-   * Masks the string specified, so that only first and last symbols are the same and all other symbols are replaced
-   * with '*'. The length of the string remains the same.
-   *
-   * @param word curse word to be masked
-   * @return masked version of the string specified
-   */
-  private String getReplacementWord(String word) {
-    if (word.length() <= 2) {
-      return word;
-    }
-    StringBuilder replacement = new StringBuilder();
-    replacement.append(word.charAt(0));
-    replacement.append("*".repeat(word.length() - 2));
-    replacement.append(word.charAt(word.length() - 1));
-    return replacement.toString();
   }
 
 }

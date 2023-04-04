@@ -17,8 +17,9 @@ public class MessageSchedulerImpl implements MessageScheduler {
     this.messageProcessor = messageProcessor;
   }
 
-  public void start() throws SQLException, IOException {
+  public void start() throws SQLException, IOException, InterruptedException {
     while (!Thread.currentThread().isInterrupted()) {
+      Thread.sleep(500);
       messageProcessor.process();
     }
   }

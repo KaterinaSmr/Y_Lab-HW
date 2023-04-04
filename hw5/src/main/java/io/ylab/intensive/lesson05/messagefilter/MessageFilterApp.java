@@ -2,11 +2,8 @@ package io.ylab.intensive.lesson05.messagefilter;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 public class MessageFilterApp {
-  public static void main(String[] args) throws SQLException, IOException {
+  public static void main(String[] args) throws Exception {
 
     AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Config.class);
     applicationContext.registerShutdownHook();

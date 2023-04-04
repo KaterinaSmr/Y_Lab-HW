@@ -59,10 +59,14 @@ public class MessageProcessorImpl implements MessageProcessor {
    * Next, withing this match the curse word itself is searched. Based on these 2 searches, the start position of the
    * word to be replaced is determined. First and last symbols of the bad word are remaining the same, every other symbol
    * is replaces with '*'.
-   * @param sb message, in which the curse word should be masked
+   *
+   * @param sb      message, in which the curse word should be masked
    * @param badWord word to be masked
    */
   private void maskBadWord(StringBuilder sb, String badWord) {
+    if (badWord.length() < 3) {
+      return;
+    }
     Matcher matcher = Pattern.compile(wordBorder + badWord + wordBorder).matcher(sb);
 
     if (matcher.find()) {
